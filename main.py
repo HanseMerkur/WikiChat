@@ -11,9 +11,9 @@ from langchain_community.embeddings.bedrock import BedrockEmbeddings
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_core.embeddings import Embeddings
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.messages import HumanMessage
+from langchain_core.output_parsers import StrOutputParser
 
-from modules.retrieval import PROMPT_TEMPLATE_DE
+from modules.retrieval import PROMPT_TEMPLATE_DE, format_docs
 
 # current_dir = os.path.dirname(os.path.abspath(__file__))
 # DOCU_PATH = os.path.join(current_dir, "data/docu")
@@ -48,20 +48,19 @@ def main(llm: BaseChatModel, embeddings: Embeddings, db_client: chromadb.HttpCli
     question = input("Stelle eine Frage: ")
 
     # retrieve relevant docs/chunks
-    relevant_docs = db.similarity_search(query=question, k=2)
+    retriever = db.as_retriever(search_kwargs={"k": 2})
+    relevant_docs = retriever.get_relevant_documents(query=question)
 
-    context_text = "\n\n---\n\n".join([doc.page_content for doc in relevant_docs])
-    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE_DE)
-    prompt = prompt_template.format(context=context_text, question=question)
-    print(prompt)
+    # print relevant docs content
+    for doc in relevant_docs:
+        print("\n---\n" + doc.page_content + "\n---\n")
 
-    messages = [
-        HumanMessage(content="Du bist ein hilfreicher Assistent."),
-        HumanMessage(content=prompt),
-    ]
+    context_text = format_docs(relevant_docs)
+    prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE_DE)
 
-    response_text = llm.invoke(messages)
-    print(response_text.content)
+    chain = prompt | llm | StrOutputParser()
+    resp = chain.invoke({"context": context_text, "question": question})
+    print(resp)
 
 
 if __name__ == "__main__":
