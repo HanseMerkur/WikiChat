@@ -3,7 +3,7 @@ networks:
     driver: bridge
 
 services:
-  db:
+  vector-db:
     image: chromadb/chroma:0.4.24
     volumes:
       # Be aware that indexed data are located in "/chroma/chroma/"
@@ -26,7 +26,19 @@ services:
       retries: 3
     networks:
       - net
+  document-db:
+    image: redis:7-alpine
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    volumes:
+      - './data/redis:/root/redis'
 
 volumes:
   chroma-data:
+    driver: local
+  redis-data:
     driver: local
