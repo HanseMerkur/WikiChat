@@ -11,3 +11,4 @@ boto3==1.34.92
 langchain-chroma==0.1.0
 redis==5.0.4
 langchainhub==0.1.15
+nbconvert==7.16.4
