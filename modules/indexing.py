@@ -4,7 +4,7 @@ from langchain_core.embeddings import Embeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 SUMMARY_PROMPT_TEMPLATE_DE = """
-Fasse die Inhalte des bereitgestellten Dokuments zusammen und benutze dabei wichtige Schlüsselwörter:
+Fasse das bereitgestellte Dokument kurz und prägnant zusammen und benutze dabei wichtige Schlüsselwörter:
         
 ---
 {doc}
@@ -14,7 +14,7 @@ Assistant:
 """
 
 SUMMARY_PROMPT_TEMPLATE_EN = """
-Summarize the contents of the provided document, including important key words:
+Create a concise summary of the provided document, including important key words from it. Here ist the document:
         
 ---
 {doc}
