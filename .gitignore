@@ -4,6 +4,7 @@ export-env-vars.sh
 RAG-step-by-step.md
 data/docu
 data/PDFs
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
