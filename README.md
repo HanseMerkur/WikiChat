@@ -16,7 +16,7 @@ Before you start, those requirements should be met:
 - You should have a Personal Access Token (PAT) for Confluence
 - if you want to use Bedrock, configure the credentials as described [here](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html)
 
-### Step 0 - virtual env and requirements
+### Step 1 - virtual env and requirements
 
 Set up a virtual invironment and install requirements.
 
@@ -26,15 +26,31 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Step 1 - Indexing
+### Step 2 - Indexing
 
-Indexing is done by running the `indexing.ipynb` notebook. Before you run it, ensure that you environment is set up (see notebook) and that you have [ChromaDB](https://docs.trychroma.com/) up and running. To run an instance locally, use the `docker-compose.yaml` provided in the repo. Run it with:
+Indexing - loading your documents into a DB for later retrieval - is done by running one of the notebooks in the `notebooks` directory. There are multiple options available:
+
+#### 1. Basic indexing
+
+Here the most basic approach to indexing is implemented. We split the confluence documents recursively by characters, embed them and save them into a vector database for later retrieval. See notebook for more details.
+
+Before you run the notebook, ensure that you environment is set up (see notebook) and that you have [ChromaDB](https://docs.trychroma.com/) up and running. To run an instance locally, use the `docker-compose.yaml` provided in the repo. Run it with:
+
+```bash
+docker-compose up -d vector-db
+```
+
+When run locally, Chroma will save it's data in the `data/chroma` directory.
+
+#### 2. Multi-represenation indexing
+
+This is a more advanced approach to indexing, which may be beneficial when you have access to fast LLM with a large context window. Here we retrieve full confluence documents using the embdedding of their summaries. For details, see notebook.
+
+As in the previous option, set up your environment. Additionaly you'll need a local instance of redis DB up and running. To achieve this, run:
 
 ```bash
 docker-compose up -d
 ```
-
-When run locally, Chroma will save it's data in the `data/chroma` directory.
 
 ### Step 2 - run the app
 
